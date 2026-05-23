@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnostic Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .ok { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>方案生成器 - 诊断页面</h1>
+    
+    <div class="section ok">
+        <h2>✓ Flask服务器状态</h2>
+        <p>Flask服务器正在正常运行</p>
+    </div>
+    
+    <div class="section">
+        <h2>API测试</h2>
+        <button onclick="testAPI()">测试Products API</button>
+        <pre id="apiResult">点击按钮测试...</pre>
+    </div>
+    
+    <div class="section">
+        <h2>首页内容检查</h2>
+        <button onclick="checkHomepage()">检查首页HTML</button>
+        <pre id="homepageResult">点击按钮检查...</pre>
+    </div>
+    
+    <div class="section">
+        <h2>浏览器信息</h2>
+        <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        <p><strong>JavaScript Enabled:</strong> Yes</p>
+        <p><strong>Cookies Enabled:</strong> <span id="cookiesEnabled"></span></p>
+    </div>
+    
+    <div class="section error">
+        <h2>如果内容不显示，请尝试：</h2>
+        <ol>
+            <li>按 <strong>Ctrl + Shift + Delete</strong> 清除浏览器缓存</li>
+            <li>使用 <strong>无痕/隐私模式</strong> 打开 http://localhost:5000</li>
+            <li>按 <strong>F12</strong> 打开开发者工具，查看Console标签是否有错误</li>
+            <li>尝试其他浏览器（Chrome、Edge、Firefox）</li>
+        </ol>
+    </div>
+    
+    <script>
+        // 显示浏览器信息
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('cookiesEnabled').textContent = navigator.cookieEnabled ? 'Yes' : 'No';
+        
+        // 测试API
+        function testAPI() {
+            var result = document.getElementById('apiResult');
+            result.textContent = 'Testing...';
+            
+            fetch('/api/products')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    result.textContent = 'Status: OK\nProducts count: ' + data.length + '\n\nFirst product:\n' + JSON.stringify(data[0], null, 2);
+                })
+                .catch(function(error) {
+                    result.textContent = 'Error: ' + error.message;
+                });
+        }
+        
+        // 检查首页
+        function checkHomepage() {
+            var result = document.getElementById('homepageResult');
+            result.textContent = 'Checking...';
+            
+            fetch('/')
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    var checks = [
+                        { name: '基本信息配置', found: html.indexOf('基本信息配置') !== -1 },
+                        { name: '第3章建设内容', found: html.indexOf('第3章') !== -1 },
+                        { name: 'productItems容器', found: html.indexOf('id="productItems"') !== -1 },
+                        { name: 'displayProducts函数', found: html.indexOf('function displayProducts') !== -1 },
+                        { name: '</script>标签', found: html.indexOf('</script>') !== -1 },
+                        { name: '</body>标签', found: html.indexOf('</body>') !== -1 }
+                    ];
+                    
+                    var output = 'Homepage HTML Check Results:\n\n';
+                    var allOk = true;
+                    
+                    checks.forEach(function(check) {
+                        output += (check.found ? '[OK] ' : '[MISSING] ') + check.name + '\n';
+                        if (!check.found) allOk = false;
+                    });
+                    
+                    output += '\n' + (allOk ? 'All checks passed!' : 'Some checks failed!');
+                    output += '\n\nHTML length: ' + html.length + ' characters';
+                    
+                    result.textContent = output;
+                })
+                .catch(function(error) {
+                    result.textContent = 'Error: ' + error.message;
+                });
+        }
+        
+        // 自动运行测试
+        window.onload = function() {
+            setTimeout(testAPI, 500);
+            setTimeout(checkHomepage, 1000);
+        };
+    </script>
+</body>
+</html>

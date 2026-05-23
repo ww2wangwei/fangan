@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方案生成器 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 职业教育国际化方案生成器</h1>
+            <p>基于厚溥国际产品报价单，快速生成标准化建设方案</p>
+        </div>
+
+        
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">📋 基本信息配置</h2>
+    <form id="generateForm">
+        <div class="form-group">
+            <label for="school_name">学校名称 *</label>
+            <input type="text" id="school_name" name="school_name"
+                   value="XX职业技术学院" required onchange="updateSection4Title(0, this.value)">
+        
+
+        <div class="form-group">
+            <label for="partner_country">合作国家/地区 *</label>
+            <input type="text" id="partner_country" name="partner_country"
+                   value="印度" required>
+        
+
+        <div class="form-group">
+            <label for="partner_institution">合作院校 *</label>
+            <input type="text" id="partner_institution" name="partner_institution"
+                   value="菲律宾南洋理工大学" required onchange="updateSection4Title(1, this.value)">
+        
+
+        <div class="form-group">
+            <label for="chinese_enterprise">中资企业名称</label>
+            <input type="text" id="chinese_enterprise" name="chinese_enterprise"
+                   value="青山控股集团"
+                   placeholder="例如：青山控股集团" onchange="updateSection4Title(2, this.value)">
+        
+
+        <div class="form-group">
+            <label for="major">专业方向 *</label>
+            <input type="text" id="major" name="major"
+                   value="工业机器人" required>
+        
+
+        <div class="form-group">
+            <label for="project_name">项目名称（可选）</label>
+            <input type="text" id="project_name" name="project_name"
+                   placeholder="留空则自动生成，例如：中国-东盟工业机器人工匠学院">
+        
+
+        <!-- 多个项目名称支持 -->
+        <div class="form-group">
+            <label>额外项目名称</label>
+            <div id="extraProjectNames" style="margin-bottom: 10px;">
+                <!-- 动态添加的项目名称输入框将显示在这里 -->
+            
+            <button type="button" onclick="addExtraProjectName()" 
+                    style="background: #667eea; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                + 添加另一个项目名称
+            </button>
+            <small style="color: #999; display: block; margin-top: 5px;">
+                提示：参考图中显示了两个工匠学院名称，可以在此添加第二个、第三个项目名称
+            </small>
+        
+
+        <!-- 封面图片上传 -->
+        <div class="form-group">
+            <label>🖼️ 封面图片</label>
+            <div id="coverImagePreview" style="margin-bottom: 10px; text-align: center; display: none;">
+                <img id="coverImagePreviewImg" src="" alt="封面预览" 
+                     style="max-width: 100%; max-height: 200px; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="file" id="coverImageUpload" accept="image/*" 
+                       style="flex: 1;" onchange="handleCoverImageUpload(this)">
+                <button type="button" onclick="removeCoverImage()" 
+                        style="background: #ff4444; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: none;"
+                        id="removeCoverImageBtn">
+                    删除图片
+                </button>
+            
+            <small style="color: #999; display: block; margin-top: 5px;">
+                支持PNG、JPG、GIF格式，最大16MB。建议尺寸：1200x600像素或更高
+            </small>
+            <input type="hidden" id="cover_image_url" name="cover_image_url" value="">
+        
+    </form>
+
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">🤖 第1章 项目建设必要性和可行性</h2>
+    
+    <!-- 自定义内容区域 -->
+    <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #333;">📝 第1章内容项</h3>
+            <button type="button" onclick="addSection1Item()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                + 添加内容项
+            </button>
+        
+        <p style="color: #666; font-size: 12px; margin-bottom: 15px;">
+            可以自定义添加多个内容项，每项包含标题、内容和AI生成按钮。点击AI生成按钮会根据配置自动生成针对性内容。
+        </p>
+    
+
+    <!-- 内容项列表 -->
+    <div id="section1Items">
+        <!-- 默认添加两个示例项：必要性和可行性 -->
+        <div class="section1-item" data-index="0" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 1</strong>
+                <button type="button" onclick="removeSection1Item(0)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section1_title_0" placeholder="例如：项目建设的必要性" value="项目建设的必要性" onchange="updateSection1Item(0)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section1_content_0" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection1Item(0)"></textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection1Content(0)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection1Content(0)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+
+        <div class="section1-item" data-index="1" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 2</strong>
+                <button type="button" onclick="removeSection1Item(1)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section1_title_1" placeholder="例如：项目建设的可行性" value="项目建设的可行性" onchange="updateSection1Item(1)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section1_content_1" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection1Item(1)"></textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection1Content(1)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection1Content(1)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+    
+
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">📋 第2章 项目建设规划</h2>
+    
+    <!-- 自定义内容区域 -->
+    <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #333;">📝 第2章内容项</h3>
+            <button type="button" onclick="addSection2Item()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                + 添加内容项
+            </button>
+        
+        <p style="color: #666; font-size: 12px; margin-bottom: 15px;">
+            可以自定义添加多个内容项，每项包含标题、内容和AI生成按钮。点击AI生成按钮会根据配置自动生成针对性内容。
+        </p>
+    
+
+    <!-- 内容项列表 -->
+    <div id="section2Items">
+        <!-- 默认添加两个示例项：项目目标和建设内容 -->
+        <div class="section2-item" data-index="0" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 1</strong>
+                <button type="button" onclick="removeSection2Item(0)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section2_title_0" placeholder="例如：项目目标" value="项目目标" onchange="updateSection2Item(0)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section2_content_0" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection2Item(0)"></textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection2Content(0)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection2Content(0)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+
+        <div class="section2-item" data-index="1" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 2</strong>
+                <button type="button" onclick="removeSection2Item(1)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section2_title_1" placeholder="例如：建设内容规划" value="建设内容规划" onchange="updateSection2Item(1)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section2_content_1" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection2Item(1)"></textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection2Content(1)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection2Content(1)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+    
+
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">🏗️ 第3章 建设内容选择</h2>
+    <p style="color: #666; margin-bottom: 15px;">从厚溥国际产品报价单中选择需要包含的建设内容：</p>
+    
+    <div id="productSelection">
+        <!-- 加载状态提示 -->
+        <div id="loadingProducts" style="text-align: center; padding: 20px;">
+            <span style="font-size: 14px; color: #667eea;">⏳ 正在加载产品列表...</span>
+        
+        
+        <!-- 错误提示 -->
+        <div id="productError" style="padding: 15px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 5px; color: #856404; display: none;">
+            ️ 加载失败，请刷新页面重试
+        
+        
+        <!-- 产品列表区域 -->
+        <div id="productListContainer" style="display: none;">
+            <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                <label style="cursor: pointer; font-weight: bold;">
+                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                    全选
+                </label>
+                <span style="margin-left: 15px; color: #666; font-size: 12px;" id="selectedCount">已选 0 项</span>
+            
+            
+            <div id="productItems" style="max-height: 500px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 5px; padding: 10px;">
+                <!-- 产品列表将在这里动态加载 -->
+            
+        
+    
+
+    <div style="margin-top: 30px;">
+        <h3 style="margin-bottom: 15px; color: #333;">➕ 自定义建设内容</h3>
+        <div id="customItems">
+            <!-- 自定义项目将在这里添加 -->
+        
+        <button type="button" class="btn" onclick="addCustomItem()" style="margin-top: 10px;">
+            + 添加自定义项目
+        </button>
+    
+
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">🤝 第4章 协同机制与职责矩阵</h2>
+    
+    <!-- 自定义内容区域 -->
+    <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #333;">📝 第4章内容项</h3>
+            <button type="button" onclick="addSection4Item()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                + 添加内容项
+            </button>
+        
+        <p style="color: #666; font-size: 12px; margin-bottom: 15px;">
+            可以自定义添加多个内容项，每项包含标题、内容和AI生成按钮。点击AI生成按钮会根据配置自动生成针对性内容。
+        </p>
+    
+
+    <!-- 内容项列表 -->
+    <div id="section4Items">
+        <!-- 默认添加四个示例项：带默认值内容 -->
+        <div class="section4-item" data-index="0" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 1</strong>
+                <button type="button" onclick="removeSection4Item(0)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section4_title_0" placeholder="" value="" onchange="updateSection4Item(0)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section4_content_0" rows="8" onchange="updateSection4Item(0)">职责：
+
+1. 负责项目总体规划和组织实施
+
+2. 负责专业标准、课程标准的开发和教学资源建设
+
+3. 负责选派教师赴海外教学点任教
+
+4. 负责学生选拔、管理和就业指导
+
+5. 负责项目经费管理和质量控制</textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection4Content(0)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection4Content(0)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+
+        <div class="section4-item" data-index="1" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 2</strong>
+                <button type="button" onclick="removeSection4Item(1)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section4_title_1" placeholder="" value="" onchange="updateSection4Item(1)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section4_content_1" rows="8" onchange="updateSection4Item(1)">1．为中国-东盟关键金属产业链工匠学院、中国-东盟工业机器人工匠学院提供场
+
+地支持，包括挂牌场地、教学用房、实训教学中心建设场地等。
+
+2．1+1+1 双学历合作模式的主管部门备案。
+
+3．配合中方院校开展岗位能力调研，参与专业标准、课程标准、教材及在线课程资
+
+源的开发与审核工作。
+
+4．负责1+1+1订单班印尼学生的招生、遴选与日常管理，基础教学，组织本校师
+
+生参与技能培训和竞赛交流。</textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection4Content(1)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection4Content(1)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+
+        <div class="section4-item" data-index="2" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 3</strong>
+                <button type="button" onclick="removeSection4Item(2)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section4_title_2" placeholder="" value="" onchange="updateSection4Item(2)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section4_content_2" rows="8" onchange="updateSection4Item(2)">职责：
+
+1. 提供行业需求分析和岗位标准
+
+2. 参与人才培养方案制定和课程开发
+
+3. 提供实习实训岗位和就业机会
+
+4. 派遣技术专家参与教学
+
+5. 提供部分项目资金支持
+
+6. 协助学生在的实习和就业安置</textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection4Content(2)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection4Content(2)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+
+        <div class="section4-item" data-index="3" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 4</strong>
+                <button type="button" onclick="removeSection4Item(3)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section4_title_3" placeholder="厚溥海外经济合作（武汉）有限公司" value="厚海外经济合作（武汉）有限公司" onchange="updateSection4Item(3)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section4_content_3" rows="8" onchange="updateSection4Item(3)">1．负责项目整体统筹策划、成本核算及项目经费统筹管理；
+2．负责拓展对接印尼合作院校与属地中资企业，做好各方资源统筹与日常协调；
+3．统筹组织项目各类研讨会议、跨境交流活动与项目宣传推广工作；
+4．统筹调配跨境教学资源，协同推进专业标准、课程标准、国际教材及数字化教学
+资源落地应用。
+5．统筹办理项目涉外商务对接、跨境合作对接及外事沟通协调相关事宜；
+6．牵头跟进订单班人才培养全流程统筹管理，协助落实招生宣传、实习就业对接相
+关商务保障；
+7．对接印尼本土行业组织、职教联盟等权威平台为项目赋能背书，推动实现中印尼
+校企双方人才培养成果权威互认，持续扩大项目品牌影响力与行业覆盖面</textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection4Content(3)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection4Content(3)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+    
+
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">🛡️ 第6章 项目保障</h2>
+    
+    <!-- 自定义内容区域 -->
+    <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #333;">📝 第6章内容项</h3>
+            <button type="button" onclick="addSection6Item()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                + 添加内容项
+            </button>
+        
+        <p style="color: #666; font-size: 12px; margin-bottom: 15px;">
+            可以自定义添加多个内容项，每项包含标题、内容和AI生成按钮。点击AI生成按钮会根据配置自动生成针对性内容。
+        </p>
+    
+
+    <!-- 内容项列表 -->
+    <div id="section6Items">
+        <!-- 默认添加一个示例项 -->
+        <div class="section6-item" data-index="0" style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <strong style="color: #667eea;">内容项 1</strong>
+                <button type="button" onclick="removeSection6Item(0)" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>标题:</label>
+                <input type="text" id="section6_title_0" placeholder="例如：组织保障" onchange="updateSection6Item(0)">
+            
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>内容:</label>
+                <textarea id="section6_content_0" rows="8" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection6Item(0)"></textarea>
+            
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="generateSection6Content(0)" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    ✨ AI生成内容
+                </button>
+                <button type="button" onclick="clearSection6Content(0)" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                    清空
+                </button>
+            
+        
+    
+
+
+<div class="card">
+    <div style="margin-top: 30px;">
+        <button type="button" class="btn btn-secondary" onclick="previewSolution()">
+            👁️ 预览方案
+        </button>
+        <button type="button" class="btn btn-success" onclick="generateSolution()">
+            📄 生成并下载
+        </button>
+    
+
+    <div class="loading" id="loading">
+        <div class="spinner">
+        <p>正在生成方案，请稍候...</p>
+    
+
+
+<script>
+var selectedProducts = [];
+var customProducts = [];
+
+// 页面加载完成后自动加载产品列表
+window.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+    
+    // 初始化第4章标题默认值
+    initSection4Titles();
+});
+
+// 添加额外项目名称输入框
+var extraProjectNameCount = 0;
+function addExtraProjectName() {
+    extraProjectNameCount++;
+    var container = document.getElementById('extraProjectNames');
+    
+    var div = document.createElement('div');
+    div.className = 'form-group';
+    div.style.cssText = 'margin-bottom: 10px; padding-left: 20px; border-left: 2px solid #667eea;';
+    
+    var inputId = 'extra_project_name_' + extraProjectNameCount;
+    div.innerHTML = 
+        '<div style="display: flex; align-items: center; gap: 10px;">' +
+            '<input type="text" id="' + inputId + '" class="extra-project-name" ' +
+                   'placeholder="例如：中国-东盟关键金属产业链工匠学院" ' +
+                   'style="flex: 1;">' +
+            '<button type="button" onclick="this.parentElement.parentElement.remove()" ' +
+                    'style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">' +
+                '删除' +
+            '</button>' +
+        '</div>';
+    
+    container.appendChild(div);
+}
+
+// 封面图片上传处理
+var currentCoverImageUrl = '';
+
+function handleCoverImageUpload(input) {
+    if (!input.files || !input.files[0]) {
+        return;
+    }
+    
+    var file = input.files[0];
+    
+    // 检查文件大小（16MB）
+    if (file.size > 16 * 1024 * 1024) {
+        alert('图片大小不能超过16MB');
+        input.value = '';
+        return;
+    }
+    
+    // 检查文件类型
+    if (!file.type.match(/image\/(png|jpeg|jpg|gif|bmp|webp)/i)) {
+        alert('请上传图片文件（PNG、JPG、GIF等格式）');
+        input.value = '';
+        return;
+    }
+    
+    // 显示预览
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('coverImagePreviewImg').src = e.target.result;
+        document.getElementById('coverImagePreview').style.display = 'block';
+        document.getElementById('removeCoverImageBtn').style.display = 'inline-block';
+    };
+    reader.readAsDataURL(file);
+    
+    // 上传到服务器
+    var formData = new FormData();
+    formData.append('cover_image', file);
+    
+    // 显示上传中状态
+    input.disabled = true;
+    input.style.opacity = '0.5';
+    
+    fetch('/api/upload-cover-image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(result) {
+        if (result.success) {
+            currentCoverImageUrl = result.image_url;
+            document.getElementById('cover_image_url').value = currentCoverImageUrl;
+            console.log('图片上传成功:', result.image_url);
+        } else {
+            alert('上传失败: ' + result.error);
+            removeCoverImage();
+        }
+    })
+    .catch(function(error) {
+        console.error('上传错误:', error);
+        alert('上传失败，请重试');
+        removeCoverImage();
+    })
+    .finally(function() {
+        input.disabled = false;
+        input.style.opacity = '1';
+    });
+}
+
+function removeCoverImage() {
+    // 清空文件输入
+    document.getElementById('coverImageUpload').value = '';
+    
+    // 隐藏预览
+    document.getElementById('coverImagePreview').style.display = 'none';
+    document.getElementById('coverImagePreviewImg').src = '';
+    
+    // 隐藏删除按钮
+    document.getElementById('removeCoverImageBtn').style.display = 'none';
+    
+    // 清空URL
+    currentCoverImageUrl = '';
+    document.getElementById('cover_image_url').value = '';
+}
+
+function initSection4Titles() {
+    try {
+        var schoolName = document.getElementById('school_name').value || '';
+        var partnerInstitution = document.getElementById('partner_institution').value || '';
+        var chineseEnterprise = document.getElementById('chinese_enterprise').value || '';
+        
+        if (schoolName) {
+            var title0 = document.getElementById('section4_title_0');
+            if (title0) title0.value = schoolName;
+        }
+        if (partnerInstitution) {
+            var title1 = document.getElementById('section4_title_1');
+            if (title1) title1.value = partnerInstitution;
+        }
+        if (chineseEnterprise) {
+            var title2 = document.getElementById('section4_title_2');
+            if (title2) title2.value = chineseEnterprise;
+        }
+    } catch (e) {
+        console.error('初始化第4章标题时出错:', e);
+    }
+}
+
+function updateSection4Title(index, value) {
+    var titleInput = document.getElementById('section4_title_' + index);
+    if (titleInput && value) {
+        titleInput.value = value;
+        // 同时更新对应的section4Items数组中的值
+        if (typeof section4Items !== 'undefined' && section4Items[index]) {
+            section4Items[index].title = value;
+        }
+    }
+}
+
+function showLoading() {
+    document.getElementById('loading').classList.add('active');
+}
+
+function hideLoading() {
+    document.getElementById('loading').classList.remove('active');
+}
+
+function getFormData() {
+    try {
+        var form = document.getElementById('generateForm');
+        var formData = new FormData(form);
+        
+        // 收集额外项目名称
+        var extraProjectNames = [];
+        var extraInputs = document.querySelectorAll('.extra-project-name');
+        for (var i = 0; i < extraInputs.length; i++) {
+            var value = extraInputs[i].value.trim();
+            if (value) {
+                extraProjectNames.push(value);
+            }
+        }
+        formData.append('extra_project_names', JSON.stringify(extraProjectNames));
+        
+        // 添加选中的产品
+        formData.append('selected_items', JSON.stringify(selectedProducts));
+        formData.append('custom_items', JSON.stringify(customProducts));
+        
+        // 添加AI增强开关（如果存在）
+        var useAiEl = document.getElementById('use_ai');
+        if (useAiEl) {
+            var useAi = useAiEl.checked;
+            formData.append('use_ai', useAi.toString());
+        }
+        
+        // 添加第1章自定义内容
+        if (typeof updateSection1ItemsFromDOM === 'function') {
+            updateSection1ItemsFromDOM(); // 先更新数组
+        }
+        formData.append('section1_custom_items', JSON.stringify(typeof section1Items !== 'undefined' ? section1Items : []));
+        
+        // 添加第2章自定义内容
+        if (typeof updateSection2ItemsFromDOM === 'function') {
+            updateSection2ItemsFromDOM(); // 先更新数组
+        }
+        formData.append('section2_custom_items', JSON.stringify(typeof section2Items !== 'undefined' ? section2Items : []));
+        
+        // 添加第4章自定义内容
+        if (typeof updateSection4ItemsFromDOM === 'function') {
+            updateSection4ItemsFromDOM(); // 先更新数组
+        }
+        formData.append('section4_custom_items', JSON.stringify(typeof section4Items !== 'undefined' ? section4Items : []));
+        
+        // 添加第6章自定义内容
+        if (typeof updateSection6ItemsFromDOM === 'function') {
+            updateSection6ItemsFromDOM(); // 先更新数组
+        }
+        formData.append('section6_custom_items', JSON.stringify(typeof section6Items !== 'undefined' ? section6Items : []));
+        
+        // 添加封面图片URL（如果已上传）
+        var coverImageUrl = document.getElementById('cover_image_url').value;
+        if (coverImageUrl) {
+            formData.append('cover_image_url', coverImageUrl);
+        }
+        
+        return formData;
+    } catch (error) {
+        console.error('获取表单数据时出错:', error);
+        throw error;
+    }
+}
+
+// 从DOM更新section1Items数组
+function updateSection1ItemsFromDOM() {
+    section1Items = [];
+    var items = document.querySelectorAll('.section1-item');
+    
+    for (var i = 0; i < items.length; i++) {
+        var titleEl = document.getElementById('section1_title_' + i);
+        var contentEl = document.getElementById('section1_content_' + i);
+        
+        section1Items.push({
+            title: titleEl ? titleEl.value : '',
+            content: contentEl ? contentEl.value : ''
+        });
+    }
+}
+
+// 从DOM更新section2Items数组
+function updateSection2ItemsFromDOM() {
+    section2Items = [];
+    var items = document.querySelectorAll('.section2-item');
+    
+    for (var i = 0; i < items.length; i++) {
+        var titleEl = document.getElementById('section2_title_' + i);
+        var contentEl = document.getElementById('section2_content_' + i);
+        
+        section2Items.push({
+            title: titleEl ? titleEl.value : '',
+            content: contentEl ? contentEl.value : ''
+        });
+    }
+}
+
+// 从DOM更新section4Items数组
+function updateSection4ItemsFromDOM() {
+    section4Items = [];
+    var items = document.querySelectorAll('.section4-item');
+    
+    for (var i = 0; i < items.length; i++) {
+        var titleEl = document.getElementById('section4_title_' + i);
+        var contentEl = document.getElementById('section4_content_' + i);
+        
+        section4Items.push({
+            title: titleEl ? titleEl.value : '',
+            content: contentEl ? contentEl.value : ''
+        });
+    }
+}
+
+function loadProducts() {
+    // 显示加载状态
+    document.getElementById('loadingProducts').style.display = 'block';
+    document.getElementById('productError').style.display = 'none';
+    document.getElementById('productListContainer').style.display = 'none';
+    
+    fetch('/api/products')
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('网络响应错误');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            // 隐藏加载状态
+            document.getElementById('loadingProducts').style.display = 'none';
+            
+            // 检查是否有数据
+            if (!data || data.length === 0) {
+                showError('未找到产品数据，请检查Excel文件');
+                return;
+            }
+            
+            // 显示产品列表
+            displayProducts(data);
+        })
+        .catch(function(error) {
+            document.getElementById('loadingProducts').style.display = 'none';
+            console.error('加载产品失败:', error);
+            showError('加载失败: ' + error.message);
+        });
+}
+
+function showError(message) {
+    var errorDiv = document.getElementById('productError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function displayProducts(products) {
+    var container = document.getElementById('productItems');
+    var productListContainer = document.getElementById('productListContainer');
+
+    // 清空容器
+    container.innerHTML = '';
+
+    // 为每个产品创建卡片
+    products.forEach(function(product, index) {
+        var productCard = document.createElement('div');
+        productCard.className = 'form-group';
+        productCard.style.cssText = 'padding: 15px; border-bottom: 1px solid #e0e0e0; margin-bottom: 0; background: #fafafa; border-radius: 4px;';
+        
+        // 最后一项去掉底部边框
+        if (index === products.length - 1) {
+            productCard.style.borderBottom = 'none';
+        }
+
+        var productJson = JSON.stringify(product).replace(/"/g, '&quot;');
+        
+        // 获取详细内容并格式化为列表（每项占一行）
+        var serviceContent = formatMultilineContent(product.service_content);
+        var technicalParams = formatMultilineContent(product.technical_params);
+        var evidenceMaterials = formatMultilineContent(product.evidence_materials);
+        var price = product.price || '0';
+        var unit = product.unit || '项';
+        var duration = product.duration || '未指定周期';
+
+        productCard.innerHTML = 
+            '<label style="display: block; cursor: pointer;">' +
+                '<div style="display: flex; align-items: start; margin-bottom: 10px;">' +
+                    '<input type="checkbox" ' +
+                           'name="product_' + index + '" ' +
+                           'value="' + productJson + '"' +
+                           'onchange="updateSelectedProducts()" ' +
+                           'style="margin-right: 10px; margin-top: 3px; width: 20px; height: 20px; flex-shrink: 0;">' +
+                    '<div style="flex: 1;">' +
+                        '<strong style="font-size: 15px; color: #333; font-weight: bold;">' + product.name + '</strong>' +
+                        '<div style="font-size: 12px; color: #667eea; margin-top: 5px; font-weight: bold;">' +
+                            '💰 ¥' + price + ' / ' + unit + ' &nbsp;&nbsp;|&nbsp;&nbsp; ⏱️ ' + duration +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                
+                // 详细信息区域（可折叠）
+                '<details style="margin-left: 30px; padding: 10px; background: white; border-radius: 4px; border-left: 3px solid #667eea;">' +
+                    '<summary style="cursor: pointer; font-size: 13px; color: #667eea; font-weight: bold; margin-bottom: 8px;">' +
+                        '📋 查看详细参数（点击展开）' +
+                    '</summary>' +
+                    
+                    '<div style="font-size: 12px; line-height: 1.8; margin-top: 10px;">' +
+                        '<div style="margin-bottom: 8px;">' +
+                            '<strong style="color: #333;">📝 服务内容：</strong>' +
+                                                            serviceContent +
+                            '</div>' +
+                        '</div>' +
+                        
+                        '<div style="margin-bottom: 8px;">' +
+                            '<strong style="color: #333;">️ 技术参数：</strong>' +
+                                                            technicalParams +
+                            '</div>' +
+                        '</div>' +
+                        
+                        '<div style="margin-bottom: 0;">' +
+                            '<strong style="color: #333;">📄 佐证材料/结果清单：</strong>' +
+                                                            evidenceMaterials +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</details>' +
+            '</label>';
+
+        container.appendChild(productCard);
+    });
+
+    // 显示产品列表容器
+    productListContainer.style.display = 'block';
+    
+    // 更新选中计数
+    updateSelectedCount();
+}
+
+function toggleSelectAll() {
+    var selectAll = document.getElementById('selectAll');
+    var checkboxes = document.querySelectorAll('#productItems input[type="checkbox"]');
+    
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = selectAll.checked;
+    }
+    
+    updateSelectedProducts();
+}
+
+function updateSelectedProducts() {
+    var checkboxes = document.querySelectorAll('#productItems input[type="checkbox"]:checked');
+    
+    selectedProducts = [];
+    for (var i = 0; i < checkboxes.length; i++) {
+        try {
+            var product = JSON.parse(checkboxes[i].value);
+            selectedProducts.push(product);
+        } catch (e) {
+            console.error('解析产品数据失败:', e);
+        }
+    }
+    
+    updateSelectedCount();
+}
+
+// 格式化多行内容为HTML列表（每项占一行）
+function formatMultilineContent(content) {
+    if (!content || content.trim() === '') {
+        return '<div style="color: #999; font-style: italic;">暂无内容</div>';
+    }
+    
+    // 按换行符分割
+    var lines = content.split(/\n+/).filter(function(line) {
+        return line.trim() !== '';
+    });
+    
+    if (lines.length === 0) {
+        return '<div style="color: #999; font-style: italic;">暂无内容</div>';
+    }
+    
+    // 生成有序列表HTML
+    var html = '<ol style="margin: 0; padding-left: 20px; color: #555;">';
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        // 移除行首的数字序号（如果已有）
+        line = line.replace(/^\d+[\.\、]/, '');
+        html += '<li style="margin-bottom: 6px; line-height: 1.8;">' + line + '</li>';
+    }
+    html += '</ol>';
+    
+    return html;
+}
+
+function updateSelectedCount() {
+    var countElement = document.getElementById('selectedCount');
+    var count = selectedProducts.length;
+    countElement.textContent = '已选 ' + count + ' 项';
+}
+
+// ========== 第1章自定义内容管理 ==========
+var section1Items = [
+    { title: '项目建设的必要性', content: '' },
+    { title: '项目建设的可行性', content: '' }
+];
+
+function addSection1Item() {
+    var container = document.getElementById('section1Items');
+    var index = section1Items.length;
+    
+    var itemDiv = document.createElement('div');
+    itemDiv.className = 'section1-item';
+    itemDiv.setAttribute('data-index', index);
+    itemDiv.style.cssText = 'padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;';
+    
+    itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">' +
+            '<strong style="color: #667eea;">内容项 ' + (index + 1) + '</strong>' +
+            '<button type="button" onclick="removeSection1Item(' + index + ')" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>标题:</label>' +
+            '<input type="text" id="section1_title_' + index + '" placeholder="例如：产业背景分析" onchange="updateSection1Item(' + index + ')">' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>内容:</label>' +
+            '<textarea id="section1_content_' + index + '" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection1Item(' + index + ')"></textarea>' +
+        '</div>' +
+        '<div style="display: flex; gap: 10px;">' +
+            '<button type="button" onclick="generateSection1Content(' + index + ')" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '✨ AI生成内容' +
+            '</button>' +
+            '<button type="button" onclick="clearSection1Content(' + index + ')" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '清空' +
+            '</button>' +
+        '</div>';
+    
+    container.appendChild(itemDiv);
+    
+    // 添加到数组
+    section1Items.push({ title: '', content: '' });
+}
+
+function removeSection1Item(index) {
+    if (section1Items.length <= 1) {
+        alert('至少保留一个内容项！');
+        return;
+    }
+    
+    section1Items.splice(index, 1);
+    var container = document.getElementById('section1Items');
+    container.removeChild(container.children[index]);
+    
+    // 重新编号所有项
+    var items = container.querySelectorAll('.section1-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute('data-index', i);
+        var strong = items[i].querySelector('strong');
+        strong.textContent = '内容项 ' + (i + 1);
+        
+        // 更新按钮的onclick事件
+        var deleteBtn = items[i].querySelector('button[onclick^="removeSection1Item"]');
+        deleteBtn.setAttribute('onclick', 'removeSection1Item(' + i + ')');
+        
+        var generateBtn = items[i].querySelector('button[onclick^="generateSection1Content"]');
+        generateBtn.setAttribute('onclick', 'generateSection1Content(' + i + ')');
+        
+        var clearBtn = items[i].querySelector('button[onclick^="clearSection1Content"]');
+        clearBtn.setAttribute('onclick', 'clearSection1Content(' + i + ')');
+        
+        // 更新输入框ID和onchange
+        var titleInput = items[i].querySelector('input[id^="section1_title_"]');
+        titleInput.id = 'section1_title_' + i;
+        titleInput.setAttribute('onchange', 'updateSection1Item(' + i + ')');
+        
+        var contentTextarea = items[i].querySelector('textarea[id^="section1_content_"]');
+        contentTextarea.id = 'section1_content_' + i;
+        contentTextarea.setAttribute('onchange', 'updateSection1Item(' + i + ')');
+    }
+}
+
+function updateSection1Item(index) {
+    if (section1Items[index]) {
+        var titleEl = document.getElementById('section1_title_' + index);
+        var contentEl = document.getElementById('section1_content_' + index);
+        
+        if (titleEl) section1Items[index].title = titleEl.value;
+        if (contentEl) section1Items[index].content = contentEl.value;
+    }
+}
+
+function clearSection1Content(index) {
+    var contentEl = document.getElementById('section1_content_' + index);
+    if (contentEl) {
+        contentEl.value = '';
+        updateSection1Item(index);
+    }
+}
+
+function generateSection1Content(index) {
+    var button = event.target;
+    var titleEl = document.getElementById('section1_title_' + index);
+    var contentEl = document.getElementById('section1_content_' + index);
+    
+    // 获取表单数据
+    var schoolName = document.getElementById('school_name').value || '';
+    var partnerCountry = document.getElementById('partner_country').value || '';
+    var major = document.getElementById('major').value || '';
+    var chineseEnterprise = document.getElementById('chinese_enterprise').value || '';
+    
+    // 禁用按钮并显示加载状态
+    button.disabled = true;
+    button.classList.add('loading');
+    button.textContent = '⏳ 生成中...';
+    
+    // 准备请求数据
+    var data = {
+        subsection_id: 'custom_' + index,
+        custom_title: titleEl ? titleEl.value : '',
+        school_name: schoolName,
+        partner_country: partnerCountry,
+        major: major,
+        chinese_enterprise: chineseEnterprise
+    };
+    
+    // 发送AI生成请求
+    fetch('/api/generate-ai-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('网络响应错误');
+        }
+        return response.json();
+    })
+    .then(function(result) {
+        // 更新文本框内容
+        if (result.content && contentEl) {
+            contentEl.value = result.content;
+            updateSection1Item(index);
+            
+            // 标记按钮为成功状态
+            button.classList.remove('loading');
+            button.classList.add('success');
+            button.textContent = '✓ 已生成';
+            
+            // 2秒后恢复按钮状态
+            setTimeout(function() {
+                button.disabled = false;
+                button.classList.remove('success');
+                button.textContent = '✨ AI生成内容';
+            }, 2000);
+        } else {
+            throw new Error('未获取到生成内容');
+        }
+    })
+    .catch(function(error) {
+        console.error('AI生成失败:', error);
+        alert('❌ 生成失败: ' + error.message);
+        
+        // 恢复按钮状态
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.textContent = '✨ AI生成内容';
+    });
+}
+
+// ========== 第2章自定义内容管理 ==========
+var section2Items = [
+    { title: '项目目标', content: '' },
+    { title: '建设内容规划', content: '' }
+];
+
+function addSection2Item() {
+    var container = document.getElementById('section2Items');
+    var index = section2Items.length;
+    
+    var itemDiv = document.createElement('div');
+    itemDiv.className = 'section2-item';
+    itemDiv.setAttribute('data-index', index);
+    itemDiv.style.cssText = 'padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;';
+    
+    itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">' +
+            '<strong style="color: #667eea;">内容项 ' + (index + 1) + '</strong>' +
+            '<button type="button" onclick="removeSection2Item(' + index + ')" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>标题:</label>' +
+            '<input type="text" id="section2_title_' + index + '" placeholder="例如：实施路径" onchange="updateSection2Item(' + index + ')">' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>内容:</label>' +
+            '<textarea id="section2_content_' + index + '" rows="6" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection2Item(' + index + ')"></textarea>' +
+        '</div>' +
+        '<div style="display: flex; gap: 10px;">' +
+            '<button type="button" onclick="generateSection2Content(' + index + ')" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '✨ AI生成内容' +
+            '</button>' +
+            '<button type="button" onclick="clearSection2Content(' + index + ')" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '清空' +
+            '</button>' +
+        '</div>';
+    
+    container.appendChild(itemDiv);
+    
+    // 添加到数组
+    section2Items.push({ title: '', content: '' });
+}
+
+function removeSection2Item(index) {
+    if (section2Items.length <= 1) {
+        alert('至少保留一个内容项！');
+        return;
+    }
+    
+    section2Items.splice(index, 1);
+    var container = document.getElementById('section2Items');
+    container.removeChild(container.children[index]);
+    
+    // 重新编号所有项
+    var items = container.querySelectorAll('.section2-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute('data-index', i);
+        var strong = items[i].querySelector('strong');
+        strong.textContent = '内容项 ' + (i + 1);
+        
+        // 更新按钮的onclick事件
+        var deleteBtn = items[i].querySelector('button[onclick^="removeSection2Item"]');
+        deleteBtn.setAttribute('onclick', 'removeSection2Item(' + i + ')');
+        
+        var generateBtn = items[i].querySelector('button[onclick^="generateSection2Content"]');
+        generateBtn.setAttribute('onclick', 'generateSection2Content(' + i + ')');
+        
+        var clearBtn = items[i].querySelector('button[onclick^="clearSection2Content"]');
+        clearBtn.setAttribute('onclick', 'clearSection2Content(' + i + ')');
+        
+        // 更新输入框ID和onchange
+        var titleInput = items[i].querySelector('input[id^="section2_title_"]');
+        titleInput.id = 'section2_title_' + i;
+        titleInput.setAttribute('onchange', 'updateSection2Item(' + i + ')');
+        
+        var contentTextarea = items[i].querySelector('textarea[id^="section2_content_"]');
+        contentTextarea.id = 'section2_content_' + i;
+        contentTextarea.setAttribute('onchange', 'updateSection2Item(' + i + ')');
+    }
+}
+
+function updateSection2Item(index) {
+    if (section2Items[index]) {
+        var titleEl = document.getElementById('section2_title_' + index);
+        var contentEl = document.getElementById('section2_content_' + index);
+        
+        if (titleEl) section2Items[index].title = titleEl.value;
+        if (contentEl) section2Items[index].content = contentEl.value;
+    }
+}
+
+function clearSection2Content(index) {
+    var contentEl = document.getElementById('section2_content_' + index);
+    if (contentEl) {
+        contentEl.value = '';
+        updateSection2Item(index);
+    }
+}
+
+function generateSection2Content(index) {
+    var button = event.target;
+    var titleEl = document.getElementById('section2_title_' + index);
+    var contentEl = document.getElementById('section2_content_' + index);
+    
+    // 获取表单数据
+    var schoolName = document.getElementById('school_name').value || '';
+    var partnerCountry = document.getElementById('partner_country').value || '';
+    var major = document.getElementById('major').value || '';
+    var chineseEnterprise = document.getElementById('chinese_enterprise').value || '';
+    
+    // 禁用按钮并显示加载状态
+    button.disabled = true;
+    button.classList.add('loading');
+    button.textContent = '⏳ 生成中...';
+    
+    // 准备请求数据
+    var data = {
+        subsection_id: 'custom_section2_' + index,
+        custom_title: titleEl ? titleEl.value : '',
+        school_name: schoolName,
+        partner_country: partnerCountry,
+        major: major,
+        chinese_enterprise: chineseEnterprise
+    };
+    
+    // 发送AI生成请求
+    fetch('/api/generate-ai-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('网络响应错误');
+        }
+        return response.json();
+    })
+    .then(function(result) {
+        // 更新文本框内容
+        if (result.content && contentEl) {
+            contentEl.value = result.content;
+            updateSection2Item(index);
+            
+            // 标记按钮为成功状态
+            button.classList.remove('loading');
+            button.classList.add('success');
+            button.textContent = '✓ 已生成';
+            
+            // 2秒后恢复按钮状态
+            setTimeout(function() {
+                button.disabled = false;
+                button.classList.remove('success');
+                button.textContent = '✨ AI生成内容';
+            }, 2000);
+        } else {
+            throw new Error('未获取到生成内容');
+        }
+    })
+    .catch(function(error) {
+        console.error('AI生成失败:', error);
+        alert('❌ 生成失败: ' + error.message);
+        
+        // 恢复按钮状态
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.textContent = '✨ AI生成内容';
+    });
+}
+
+// ========== 第4章自定义内容管理 ==========
+var section4Items = [
+    { title: '', content: '' },
+    { title: '', content: '' },
+    { title: '', content: '' },
+    { title: '', content: '' }
+];
+
+function addSection4Item() {
+    var container = document.getElementById('section4Items');
+    var index = section4Items.length;
+    
+    var itemDiv = document.createElement('div');
+    itemDiv.className = 'section4-item';
+    itemDiv.setAttribute('data-index', index);
+    itemDiv.style.cssText = 'padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;';
+    
+    itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">' +
+            '<strong style="color: #667eea;">内容项 ' + (index + 1) + '</strong>' +
+            '<button type="button" onclick="removeSection4Item(' + index + ')" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>标题:</label>' +
+            '<input type="text" id="section4_title_' + index + '" placeholder="例如：协调机制" onchange="updateSection4Item(' + index + ')">' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>内容:</label>' +
+            '<textarea id="section4_content_' + index + '" rows="8" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection4Item(' + index + ')"></textarea>' +
+        '</div>' +
+        '<div style="display: flex; gap: 10px;">' +
+            '<button type="button" onclick="generateSection4Content(' + index + ')" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '✨ AI生成内容' +
+            '</button>' +
+            '<button type="button" onclick="clearSection4Content(' + index + ')" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '清空' +
+            '</button>' +
+        '</div>';
+    
+    container.appendChild(itemDiv);
+    
+    // 添加到数组
+    section4Items.push({ title: '', content: '' });
+}
+
+function removeSection4Item(index) {
+    if (section4Items.length <= 1) {
+        alert('至少保留一个内容项！');
+        return;
+    }
+    
+    section4Items.splice(index, 1);
+    var container = document.getElementById('section4Items');
+    container.removeChild(container.children[index]);
+    
+    // 重新编号所有项
+    var items = container.querySelectorAll('.section4-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute('data-index', i);
+        var strong = items[i].querySelector('strong');
+        strong.textContent = '内容项 ' + (i + 1);
+        
+        // 更新按钮的onclick事件
+        var deleteBtn = items[i].querySelector('button[onclick^="removeSection4Item"]');
+        deleteBtn.setAttribute('onclick', 'removeSection4Item(' + i + ')');
+        
+        var generateBtn = items[i].querySelector('button[onclick^="generateSection4Content"]');
+        generateBtn.setAttribute('onclick', 'generateSection4Content(' + i + ')');
+        
+        var clearBtn = items[i].querySelector('button[onclick^="clearSection4Content"]');
+        clearBtn.setAttribute('onclick', 'clearSection4Content(' + i + ')');
+        
+        // 更新输入框ID和onchange
+        var titleInput = items[i].querySelector('input[id^="section4_title_"]');
+        titleInput.id = 'section4_title_' + i;
+        titleInput.setAttribute('onchange', 'updateSection4Item(' + i + ')');
+        
+        var contentTextarea = items[i].querySelector('textarea[id^="section4_content_"]');
+        contentTextarea.id = 'section4_content_' + i;
+        contentTextarea.setAttribute('onchange', 'updateSection4Item(' + i + ')');
+    }
+}
+
+function updateSection4Item(index) {
+    if (section4Items[index]) {
+        var titleEl = document.getElementById('section4_title_' + index);
+        var contentEl = document.getElementById('section4_content_' + index);
+        
+        if (titleEl) section4Items[index].title = titleEl.value;
+        if (contentEl) section4Items[index].content = contentEl.value;
+    }
+}
+
+function clearSection4Content(index) {
+    var contentEl = document.getElementById('section4_content_' + index);
+    if (contentEl) {
+        contentEl.value = '';
+        updateSection4Item(index);
+    }
+}
+
+function generateSection4Content(index) {
+    var button = event.target;
+    var titleEl = document.getElementById('section4_title_' + index);
+    var contentEl = document.getElementById('section4_content_' + index);
+    
+    // 获取表单数据
+    var schoolName = document.getElementById('school_name').value || '';
+    var partnerCountry = document.getElementById('partner_country').value || '';
+    var major = document.getElementById('major').value || '';
+    var chineseEnterprise = document.getElementById('chinese_enterprise').value || '';
+    
+    // 禁用按钮并显示加载状态
+    button.disabled = true;
+    button.classList.add('loading');
+    button.textContent = '⏳ 生成中...';
+    
+    // 准备请求数据
+    var data = {
+        subsection_id: 'custom_section4_' + index,
+        custom_title: titleEl ? titleEl.value : '',
+        school_name: schoolName,
+        partner_country: partnerCountry,
+        major: major,
+        chinese_enterprise: chineseEnterprise
+    };
+    
+    // 发送AI生成请求
+    fetch('/api/generate-ai-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('网络响应错误');
+        }
+        return response.json();
+    })
+    .then(function(result) {
+        // 更新文本框内容
+        if (result.content && contentEl) {
+            contentEl.value = result.content;
+            updateSection4Item(index);
+            
+            // 标记按钮为成功状态
+            button.classList.remove('loading');
+            button.classList.add('success');
+            button.textContent = '✓ 已生成';
+            
+            // 2秒后恢复按钮状态
+            setTimeout(function() {
+                button.disabled = false;
+                button.classList.remove('success');
+                button.textContent = '✨ AI生成内容';
+            }, 2000);
+        } else {
+            throw new Error('未获取到生成内容');
+        }
+    })
+    .catch(function(error) {
+        console.error('AI生成失败:', error);
+        alert('❌ 生成失败: ' + error.message);
+        
+        // 恢复按钮状态
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.textContent = '✨ AI生成内容';
+    });
+}
+
+// ========== 第6章自定义内容管理 ==========
+var section6Items = [
+    { title: '', content: '' }
+];
+
+function addSection6Item() {
+    var container = document.getElementById('section6Items');
+    var index = section6Items.length;
+    
+    var itemDiv = document.createElement('div');
+    itemDiv.className = 'section6-item';
+    itemDiv.setAttribute('data-index', index);
+    itemDiv.style.cssText = 'padding: 20px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; background: white;';
+    
+    itemDiv.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">' +
+            '<strong style="color: #667eea;">内容项 ' + (index + 1) + '</strong>' +
+            '<button type="button" onclick="removeSection6Item(' + index + ')" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">删除</button>' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>标题:</label>' +
+            '<input type="text" id="section6_title_' + index + '" placeholder="例如：组织保障" onchange="updateSection6Item(' + index + ')">' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom: 15px;">' +
+            '<label>内容:</label>' +
+            '<textarea id="section6_content_' + index + '" rows="8" placeholder="输入内容或点击AI生成按钮自动生成..." onchange="updateSection6Item(' + index + ')"></textarea>' +
+        '</div>' +
+        '<div style="display: flex; gap: 10px;">' +
+            '<button type="button" onclick="generateSection6Content(' + index + ')" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '✨ AI生成内容' +
+            '</button>' +
+            '<button type="button" onclick="clearSection6Content(' + index + ')" style="background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">' +
+                '清空' +
+            '</button>' +
+        '</div>';
+    
+    container.appendChild(itemDiv);
+    
+    // 添加到数组
+    section6Items.push({ title: '', content: '' });
+}
+
+function removeSection6Item(index) {
+    if (section6Items.length <= 1) {
+        alert('至少保留一个内容项！');
+        return;
+    }
+    
+    section6Items.splice(index, 1);
+    var container = document.getElementById('section6Items');
+    container.removeChild(container.children[index]);
+    
+    // 重新编号所有项
+    var items = container.querySelectorAll('.section6-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute('data-index', i);
+        var strong = items[i].querySelector('strong');
+        strong.textContent = '内容项 ' + (i + 1);
+        
+        // 更新按钮的onclick事件
+        var deleteBtn = items[i].querySelector('button[onclick^="removeSection6Item"]');
+        deleteBtn.setAttribute('onclick', 'removeSection6Item(' + i + ')');
+        
+        var generateBtn = items[i].querySelector('button[onclick^="generateSection6Content"]');
+        generateBtn.setAttribute('onclick', 'generateSection6Content(' + i + ')');
+        
+        var clearBtn = items[i].querySelector('button[onclick^="clearSection6Content"]');
+        clearBtn.setAttribute('onclick', 'clearSection6Content(' + i + ')');
+        
+        // 更新输入框ID和onchange
+        var titleInput = items[i].querySelector('input[id^="section6_title_"]');
+        titleInput.id = 'section6_title_' + i;
+        titleInput.setAttribute('onchange', 'updateSection6Item(' + i + ')');
+        
+        var contentTextarea = items[i].querySelector('textarea[id^="section6_content_"]');
+        contentTextarea.id = 'section6_content_' + i;
+        contentTextarea.setAttribute('onchange', 'updateSection6Item(' + i + ')');
+    }
+}
+
+function updateSection6Item(index) {
+    if (section6Items[index]) {
+        var titleEl = document.getElementById('section6_title_' + index);
+        var contentEl = document.getElementById('section6_content_' + index);
+        
+        if (titleEl) section6Items[index].title = titleEl.value;
+        if (contentEl) section6Items[index].content = contentEl.value;
+    }
+}
+
+function clearSection6Content(index) {
+    var contentEl = document.getElementById('section6_content_' + index);
+    if (contentEl) {
+        contentEl.value = '';
+        updateSection6Item(index);
+    }
+}
+
+function generateSection6Content(index) {
+    var button = event.target;
+    var titleEl = document.getElementById('section6_title_' + index);
+    var contentEl = document.getElementById('section6_content_' + index);
+    
+    // 获取表单数据
+    var schoolName = document.getElementById('school_name').value || '';
+    var partnerCountry = document.getElementById('partner_country').value || '';
+    var major = document.getElementById('major').value || '';
+    var chineseEnterprise = document.getElementById('chinese_enterprise').value || '';
+    
+    // 禁用按钮并显示加载状态
+    button.disabled = true;
+    button.classList.add('loading');
+    button.textContent = '⏳ 生成中...';
+    
+    // 准备请求数据
+    var data = {
+        subsection_id: 'custom_section6_' + index,
+        custom_title: titleEl ? titleEl.value : '',
+        school_name: schoolName,
+        partner_country: partnerCountry,
+        major: major,
+        chinese_enterprise: chineseEnterprise
+    };
+    
+    // 发送AI生成请求
+    fetch('/api/generate-ai-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('网络响应错误');
+        }
+        return response.json();
+    })
+    .then(function(result) {
+        // 更新文本框内容
+        if (result.content && contentEl) {
+            contentEl.value = result.content;
+            updateSection6Item(index);
+            
+            // 标记按钮为成功状态
+            button.classList.remove('loading');
+            button.classList.add('success');
+            button.textContent = '✓ 已生成';
+            
+            // 2秒后恢复按钮状态
+            setTimeout(function() {
+                button.disabled = false;
+                button.classList.remove('success');
+                button.textContent = '✨ AI生成内容';
+            }, 2000);
+        } else {
+            throw new Error('未获取到生成内容');
+        }
+    })
+    .catch(function(error) {
+        console.error('AI生成失败:', error);
+        alert('AI生成失败: ' + error.message);
+        
+        // 恢复按钮状态
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.textContent = '✨ AI生成内容';
+    });
+}
+
+// 从DOM更新section6Items数组
+function updateSection6ItemsFromDOM() {
+    section6Items = [];
+    var items = document.querySelectorAll('.section6-item');
+    
+    for (var i = 0; i < items.length; i++) {
+        var titleEl = document.getElementById('section6_title_' + i);
+        var contentEl = document.getElementById('section6_content_' + i);
+        
+        section6Items.push({
+            title: titleEl ? titleEl.value : '',
+            content: contentEl ? contentEl.value : ''
+        });
+    }
+}
+
+function addCustomItem() {
+    var container = document.getElementById('customItems');
+    var index = customProducts.length;
+    
+    var div = document.createElement('div');
+    div.className = 'form-group';
+    div.style.cssText = 'padding: 15px; border: 2px dashed #667eea; border-radius: 5px; margin-bottom: 15px; background: #f9f9f9;';
+    
+    div.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">' +
+            '<strong>自定义项目 ' + (index + 1) + '</strong>' +
+            '<button type="button" onclick="removeCustomItem(' + index + ')" style="background: #f5576c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">删除</button>' +
+        '</div>' +
+        '<div class="form-group">' +
+            '<label>项目名称:</label>' +
+            '<input type="text" id="custom_name_' + index + '" placeholder="输入项目名称" onchange="updateCustomItem(' + index + ')">' +
+        '</div>' +
+        '<div class="form-group">' +
+            '<label>项目描述:</label>' +
+            '<textarea id="custom_desc_' + index + '" rows="3" placeholder="输入项目描述" onchange="updateCustomItem(' + index + ')"></textarea>' +
+        '</div>' +
+        '<div class="form-group">' +
+            '<label>预算金额(元):</label>' +
+            '<input type="number" id="custom_price_' + index + '" placeholder="0" onchange="updateCustomItem(' + index + ')">' +
+        '</div>';
+    
+    container.appendChild(div);
+    
+    // 添加到数组
+    customProducts.push({ name: '', description: '', price: 0 });
+}
+
+function removeCustomItem(index) {
+    customProducts.splice(index, 1);
+    var container = document.getElementById('customItems');
+    container.removeChild(container.children[index]);
+}
+
+function updateCustomItem(index) {
+    if (customProducts[index]) {
+        customProducts[index].name = document.getElementById('custom_name_' + index).value;
+        customProducts[index].description = document.getElementById('custom_desc_' + index).value;
+        customProducts[index].price = parseFloat(document.getElementById('custom_price_' + index).value) || 0;
+    }
+}
+
+function previewSolution() {
+    try {
+        showLoading();
+
+        var formData = getFormData();
+
+        fetch('/preview', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) { 
+            if (!response.ok) {
+                throw new Error('服务器响应错误: ' + response.status);
+            }
+            return response.text(); 
+        })
+        .then(function(html) {
+            hideLoading();
+            var previewWindow = window.open('', '_blank');
+            if (previewWindow) {
+                previewWindow.document.write(html);
+                previewWindow.document.close();
+            } else {
+                alert('无法打开预览窗口，请检查浏览器弹窗设置');
+            }
+        })
+        .catch(function(error) {
+            hideLoading();
+            console.error('预览错误:', error);
+            alert('预览失败: ' + error.message);
+        });
+    } catch (error) {
+        hideLoading();
+        console.error('预览函数错误:', error);
+        alert('预览时发生错误: ' + error.message);
+    }
+}
+
+function generateSolution() {
+    showLoading();
+
+    var formData = getFormData();
+
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/generate';
+
+    // 遍历FormData并创建隐藏输入
+    var entries = [];
+    formData.forEach(function(value, key) {
+        entries.push({key: key, value: value});
+    });
+
+    for (var i = 0; i < entries.length; i++) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = entries[i].key;
+        input.value = entries[i].value;
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(hideLoading, 2000);
+}
+</script>
+
+    </div>
+
+    
+</body>
+</html>

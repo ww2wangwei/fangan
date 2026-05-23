@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方案预览</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        .document {
+            background: white;
+            padding: 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        p {
+            text-indent: 2em;
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        /* AI生成按钮样式 */
+        .ai-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        .ai-btn:active {
+            transform: translateY(0);
+        }
+
+        .ai-btn.loading {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ai-btn.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        /* 可编辑文本区域 */
+        .editable-text {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px dashed transparent;
+            border-radius: 5px;
+            background: transparent;
+            transition: all 0.3s ease;
+            resize: vertical;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+        .editable-text:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fafafa;
+        }
+
+        .editable-text:hover {
+            border-color: #ddd;
+            background: #fafafa;
+        }
+
+        /* 段落容器 */
+        .paragraph-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        /* 封面样式优化 */
+        .cover {
+            text-align: left;
+            padding: 0;
+            position: relative;
+        }
+
+        .cover h1 {
+            font-size: 32px;
+            border: none;
+            margin-bottom: 60px;
+        }
+
+        .cover-info {
+            font-size: 18px;
+            line-height: 2.5;
+        }
+
+        /* Logo动画效果 */
+        .logo-icon {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+        }
+
+        /* 图片悬停效果 */
+        .cover-image {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cover-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        /* 预期成果表格样式 */
+        .outcomes-table {
+            margin-top: 20px;
+        }
+
+        .outcomes-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: bold;
+            padding: 12px 8px;
+        }
+
+        .outcomes-table td {
+            padding: 10px 8px;
+            vertical-align: middle;
+        }
+
+        /* 可编辑的完成量输入框 */
+        .editable-completion {
+            transition: all 0.3s ease;
+        }
+
+        .editable-completion:focus {
+            outline: none;
+            border-color: #667eea !important;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover {
+            background: #764ba2;
+        }
+
+        /* 提示信息 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.close()">← 返回</button>
+
+    <!-- 提示信息 -->
+    <div id="toast" class="toast"></div>
+
+    <div class="document">
+        <!-- 封面 -->
+        <div class="cover" style="page-break-after: always; padding-bottom: 50px;">
+            <!-- Logo区域 - 左上角 -->
+            <div style="text-align: left; margin-bottom: 40px; position: relative;">
+                <div style="display: inline-flex; align-items: center; gap: 8px;">
+                    <!-- Logo图标占位符 -->
+                    <div class="logo-icon" 
+                         style="width: 40px; height: 40px; background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%); 
+                                border-radius: 4px; display: flex; align-items: center; justify-content: center;
+                                color: white; font-weight: bold; font-size: 24px; box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);">
+                        H
+                    </div>
+                    <div>
+                        <div style="font-size: 20px; font-weight: bold; color: #1e88e5; line-height: 1.2;">厚溥国际</div>
+                        <div style="font-size: 11px; color: #666; letter-spacing: 1px;">HOPE INTERNATIONAL</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学校名称 - 居中，较大字体 -->
+            <h1 style="font-size: 24px; border: none; margin: 50px 0 30px 0; text-align: center; 
+                       font-weight: bold; color: #333; letter-spacing: 2px;">
+                广西现代职业技术学院
+            </h1>
+
+            <!-- 项目名称列表 - 居中 -->
+            
+            <h1 style="font-size: 20px; border: none; margin: 15px 0; text-align: center; 
+                       font-weight: normal; color: #333; line-height: 1.6;">
+                中国-印度工业机器人工匠学院
+            </h1>
+            
+
+            <!-- "建设方案" - 超大标题，字间距宽 -->
+            <h1 style="font-size: 42px; border: none; margin: 60px 0 50px 0; text-align: center; 
+                       letter-spacing: 20px; font-weight: bold; color: #333;">
+                建设方案
+            </h1>
+
+            <!-- 封面图片 - 占据页面中部 -->
+            <div style="margin: 50px 0; text-align: center;">
+                
+                <!-- 显示上传的图片 -->
+                <img class="cover-image" 
+                     src="/uploads/cover_6ca7676cd6dc46ac848d59ae3344ef37.png" 
+                     alt="校园/城市全景图" 
+                     style="max-width: 100%; height: auto; max-height: 400px; 
+                            border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                            object-fit: cover;">
+                
+            </div>
+
+            <!-- 底部信息 - 公司名和日期（居左对齐） -->
+            <div style="margin-top: 80px; text-align: left; line-height: 2.2; padding-left: 50px;">
+                <p style="text-indent: 0; font-size: 16px; color: #333; margin: 0; font-weight: 500;">
+                    厚溥海外经济合作（武汉）有限公司
+                </p>
+                <p style="text-indent: 0; font-size: 16px; color: #333; margin: 10px 0 0 0;">
+                    二〇26年五月
+                </p>
+            </div>
+
+            <!-- 详细信息（折叠显示，不占用太多空间） -->
+            <details style="margin-top: 40px; padding: 15px 20px; background: #f9f9f9; 
+                           border-left: 4px solid #667eea; border-radius: 4px;">
+                <summary style="cursor: pointer; font-weight: bold; color: #667eea; margin-bottom: 10px;">
+                     项目详细信息（点击展开）
+                </summary>
+                <div style="padding-top: 10px; line-height: 1.8;">
+                    <p style="text-indent: 0; margin: 8px 0;"><strong>申报单位：</strong>广西现代职业技术学院</p>
+                    <p style="text-indent: 0; margin: 8px 0;"><strong>合作单位：</strong>菲律宾南洋理工大学</p>
+                    
+                    <p style="text-indent: 0; margin: 8px 0;"><strong>中资企业：</strong>青山控股集团</p>
+                    
+                </div>
+            </details>
+        </div>
+
+        <!-- 各章节 -->
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </div>
+
+    <script>
+        // 显示提示信息
+        function showToast(message, duration) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, duration || 2000);
+        }
+
+        // AI生成内容
+        function generateAIContent(subsectionId, school, country, major, enterprise) {
+            var button = event.target;
+            var container = document.querySelector('[data-subsection-id="' + subsectionId + '"]');
+            var textarea = container.querySelector('.editable-text');
+            
+            // 禁用按钮并显示加载状态
+            button.disabled = true;
+            button.classList.add('loading');
+            button.textContent = '⏳ 生成中...';
+            
+            // 准备请求数据
+            var data = {
+                subsection_id: subsectionId,
+                school_name: decodeURIComponent(school),
+                partner_country: decodeURIComponent(country),
+                major: decodeURIComponent(major),
+                chinese_enterprise: decodeURIComponent(enterprise)
+            };
+            
+            // 发送AI生成请求
+            fetch('/api/generate-ai-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('网络响应错误');
+                }
+                return response.json();
+            })
+            .then(function(result) {
+                // 更新文本框内容
+                if (result.content) {
+                    textarea.value = result.content;
+                    showToast('✅ AI内容生成成功！', 2000);
+                    
+                    // 标记按钮为成功状态
+                    button.classList.remove('loading');
+                    button.classList.add('success');
+                    button.textContent = '✓ 已生成';
+                    
+                    // 2秒后恢复按钮状态
+                    setTimeout(function() {
+                        button.disabled = false;
+                        button.classList.remove('success');
+                        button.textContent = '✨ AI生成内容';
+                    }, 2000);
+                } else {
+                    throw new Error('未获取到生成内容');
+                }
+            })
+            .catch(function(error) {
+                console.error('AI生成失败:', error);
+                showToast('❌ 生成失败: ' + error.message, 3000);
+                
+                // 恢复按钮状态
+                button.disabled = false;
+                button.classList.remove('loading');
+                button.textContent = '✨ AI生成内容';
+            });
+        }
+    </script>
+</body>
+</html>
