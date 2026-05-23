@@ -1,0 +1,4 @@
+# Vercel Serverless Functions
+api/
+vercel.json
+*.py

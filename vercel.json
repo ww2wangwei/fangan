@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/products",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/api/upload-cover-image",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/api/generate-ai-content",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/preview",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/generate",
+      "dest": "wsgi.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "wsgi.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "."
+  }
+}
