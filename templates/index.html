@@ -77,18 +77,6 @@
             border-color: #667eea;
         }
 
-        /* 自定义内容区域的textarea样式优化 */
-        .section1-item textarea,
-        .section2-item textarea,
-        .section4-item textarea,
-        .section6-item textarea,
-        .custom-item textarea {
-            line-height: 1.3;
-            min-height: auto;
-            padding: 5px 10px;
-            resize: vertical;
-        }
-
         .btn {
             display: inline-block;
             padding: 12px 30px;
@@ -1931,6 +1919,30 @@ function generateSolution() {
 
     setTimeout(hideLoading, 2000);
 }
+
+// 页面加载完成后，自动清理所有textarea中的双重换行符
+window.addEventListener('DOMContentLoaded', function() {
+    var textareas = document.querySelectorAll('.section1-item textarea, .section2-item textarea, .section4-item textarea, .section6-item textarea, .custom-item textarea');
+    textareas.forEach(function(textarea) {
+        // 清理双重换行符为单个换行符
+        if (textarea.value) {
+            textarea.value = textarea.value.replace(/\r\n\r\n/g, '\n').replace(/\n\n/g, '\n');
+        }
+        
+        // 监听输入事件，实时清理双重换行符
+        textarea.addEventListener('input', function() {
+            var cursorPos = this.selectionStart;
+            var oldLength = this.value.length;
+            
+            // 清理双重换行符
+            this.value = this.value.replace(/\r\n\r\n/g, '\n').replace(/\n\n/g, '\n');
+            
+            var newLength = this.value.length;
+            // 调整光标位置
+            this.setSelectionRange(cursorPos - (oldLength - newLength), cursorPos - (oldLength - newLength));
+        });
+    });
+});
 </script>
 
 </body>
