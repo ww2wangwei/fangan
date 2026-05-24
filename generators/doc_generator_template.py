@@ -217,8 +217,18 @@ class DocGeneratorTemplate:
                     if 'paragraphs' in subsection and subsection['paragraphs']:
                         for para_text in subsection['paragraphs']:
                             text = para_text if isinstance(para_text, str) else str(para_text)
+                            
+                            # 检查是否为列表项（以数字+点开头，如"1. "、"2. "等）
+                            import re
+                            is_list_item = bool(re.match(r'^\d+\.\s', text.strip()))
+                            
                             p = self.doc.add_paragraph(text)
                             p.style = 'Normal'
+                            
+                            # 如果是列表项，取消首行缩进，使用悬挂缩进
+                            if is_list_item:
+                                p.paragraph_format.first_line_indent = Pt(0)
+                                p.paragraph_format.left_indent = Pt(24)  # 整体缩进2字符
 
             # 添加表格
             if 'budget_items' in section_data and section_data['budget_items']:
