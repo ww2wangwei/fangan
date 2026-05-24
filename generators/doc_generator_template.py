@@ -221,14 +221,19 @@ class DocGeneratorTemplate:
                             # 检查是否为列表项（以数字+点开头，如"1. "、"2. "等）
                             import re
                             is_list_item = bool(re.match(r'^\d+\.\s', text.strip()))
+                            # 检查是否为简短的加粗标题（如学校名、公司名，通常不超过30字且无标点结尾）
+                            is_bold_title = len(text.strip()) < 30 and not text.strip().endswith(('。', '；', '：', '.', ';', ':')) and not is_list_item
                             
                             p = self.doc.add_paragraph(text)
                             p.style = 'Normal'
                             
-                            # 如果是列表项，取消首行缩进，使用悬挂缩进
+                            # 如果是列表项，使用悬挂缩进使换行文字与第一行对齐
                             if is_list_item:
                                 p.paragraph_format.first_line_indent = Pt(0)
                                 p.paragraph_format.left_indent = Pt(24)  # 整体缩进2字符
+                            # 如果是简短标题，也添加适当缩进
+                            elif is_bold_title:
+                                p.paragraph_format.first_line_indent = Pt(24)
 
             # 添加表格
             if 'budget_items' in section_data and section_data['budget_items']:
