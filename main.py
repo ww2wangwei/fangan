@@ -13,7 +13,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config.settings import DEFAULT_CONFIG, EXCEL_FILE
 from parsers.excel_parser import ExcelParser
 from generators.content_builder import ContentBuilder
-from generators.doc_generator import DocGenerator
+try:
+    from generators.doc_generator_template import DocGeneratorTemplate as DocGenerator
+except ImportError:
+    try:
+        from generators.doc_generator_optimized import DocGeneratorOptimized as DocGenerator
+    except ImportError:
+        from generators.doc_generator import DocGenerator
 
 
 class SolutionGenerator:
