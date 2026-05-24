@@ -114,7 +114,7 @@
         /* 段落容器 */
         .paragraph-container {
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 0;
         }
 
         /* 封面样式优化 */
@@ -422,7 +422,7 @@
             
             <div class="paragraph-container" data-subsection-id="{{ subsection.id }}">
                 {% for para in subsection.paragraphs %}
-                <textarea class="editable-text" rows="4">{{ para | replace('\n\n', '\n') | replace('\r\n\r\n', '\r\n') }}</textarea>
+                <textarea class="editable-text" rows="1">{{ para | replace('\n\n', '\n') | replace('\r\n\r\n', '\r\n') }}</textarea>
                 {% endfor %}
             </div>
 
