@@ -284,10 +284,12 @@ class DocGenerator:
                             else:
                                 text = str(para_text)
                             
-                            # 清理多余的换行符，但保留列表项的格式
+                            # 清理多余的换行符，让内容在Word中自动换行
                             import re
-                            # 将连续的两个及以上换行符替换为单个换行符
-                            text = re.sub(r'\n{2,}', '\n', text)
+                            # 将所有换行符（包括\r\n和\n）替换为空格
+                            text = re.sub(r'[\r\n]+', ' ', text)
+                            # 清理多余的空格
+                            text = re.sub(r'\s+', ' ', text).strip()
                             
                             p = self.doc.add_paragraph(text)
                             p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
