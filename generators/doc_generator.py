@@ -35,6 +35,73 @@ class DocGenerator:
             rFonts = rPr.find('.//w:rFonts', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
             if rFonts is not None:
                 rFonts.set(qn('w:eastAsia'), '宋体')
+        
+        # 设置段落行距和间距
+        style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+        style.paragraph_format.space_before = Pt(0)
+        style.paragraph_format.space_after = Pt(6)
+        
+        # 创建标题样式
+        self._create_heading_styles()
+    
+    def _create_heading_styles(self):
+        """创建标题样式"""
+        # 一级标题（章标题）
+        heading1_style = self.doc.styles.add_style('Heading1Custom', 1)  # Paragraph style
+        heading1_font = heading1_style.font
+        heading1_font.name = '黑体'
+        heading1_font.size = Pt(16)
+        heading1_font.bold = True
+        heading1_font.color.rgb = RGBColor(0, 51, 102)  # 深蓝色
+        
+        heading1_element = heading1_style.element
+        rPr = heading1_element.find('.//w:rPr', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+        if rPr is not None:
+            rFonts = rPr.find('.//w:rFonts', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+            if rFonts is not None:
+                rFonts.set(qn('w:eastAsia'), '黑体')
+        
+        heading1_style.paragraph_format.space_before = Pt(18)
+        heading1_style.paragraph_format.space_after = Pt(12)
+        heading1_style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+        
+        # 二级标题（节标题）
+        heading2_style = self.doc.styles.add_style('Heading2Custom', 1)
+        heading2_font = heading2_style.font
+        heading2_font.name = '黑体'
+        heading2_font.size = Pt(14)
+        heading2_font.bold = True
+        heading2_font.color.rgb = RGBColor(51, 102, 153)  # 中蓝色
+        
+        heading2_element = heading2_style.element
+        rPr = heading2_element.find('.//w:rPr', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+        if rPr is not None:
+            rFonts = rPr.find('.//w:rFonts', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+            if rFonts is not None:
+                rFonts.set(qn('w:eastAsia'), '黑体')
+        
+        heading2_style.paragraph_format.space_before = Pt(12)
+        heading2_style.paragraph_format.space_after = Pt(6)
+        heading2_style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+        
+        # 三级标题
+        heading3_style = self.doc.styles.add_style('Heading3Custom', 1)
+        heading3_font = heading3_style.font
+        heading3_font.name = '黑体'
+        heading3_font.size = Pt(12)
+        heading3_font.bold = True
+        heading3_font.color.rgb = RGBColor(79, 129, 189)  # 浅蓝色
+        
+        heading3_element = heading3_style.element
+        rPr = heading3_element.find('.//w:rPr', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+        if rPr is not None:
+            rFonts = rPr.find('.//w:rFonts', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})
+            if rFonts is not None:
+                rFonts.set(qn('w:eastAsia'), '黑体')
+        
+        heading3_style.paragraph_format.space_before = Pt(10)
+        heading3_style.paragraph_format.space_after = Pt(4)
+        heading3_style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
 
     def add_cover(self, content):
         """添加封面"""
@@ -213,16 +280,33 @@ class DocGenerator:
                     if 'paragraphs' in subsection and subsection['paragraphs']:
                         for para_text in subsection['paragraphs']:
                             if isinstance(para_text, str):
-                                p = self.doc.add_paragraph(para_text)
+                                text = para_text
                             else:
-                                p = self.doc.add_paragraph(str(para_text))
-
+                                text = str(para_text)
+                            
+                            p = self.doc.add_paragraph(text)
                             p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-                            p.paragraph_format.first_line_indent = Pt(24)  # 首行缩进
-
+                            
                             run = p.runs[0]
                             run.font.size = Pt(12)
                             run.font.name = '宋体'
+                            
+                            # 检查是否为列表项（以数字+点开头）或"职责："标签
+                            import re
+                            is_list_item = bool(re.match(r'^\d+\.\s', text.strip()))
+                            is_label = text.strip() in ['职责：', '职责:', '职责']
+                            
+                            # "职责："标签左对齐，无缩进
+                            if is_label:
+                                p.paragraph_format.first_line_indent = Pt(0)
+                                p.paragraph_format.left_indent = Pt(0)
+                            # 列表项使用悬挂缩进
+                            elif is_list_item:
+                                p.paragraph_format.first_line_indent = Pt(0)
+                                p.paragraph_format.left_indent = Pt(24)
+                            # 其他段落使用首行缩进
+                            else:
+                                p.paragraph_format.first_line_indent = Pt(24)
 
             # 添加预算表格
             if 'budget_items' in section_data and section_data['budget_items']:
@@ -521,9 +605,14 @@ class DocGenerator:
         section_keys = ['section1', 'section2', 'section3', 'section4',
                        'section5', 'section6', 'section7']
 
+        is_first_section = True
         for key in section_keys:
-            if key in sections:
+            if key in sections and sections[key]:
+                # 如果不是第一章，在新章节前添加分页符
+                if not is_first_section:
+                    self.doc.add_page_break()
                 self.add_section(sections[key])
+                is_first_section = False
 
         # 保存文档
         os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
