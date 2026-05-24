@@ -422,7 +422,7 @@
             
             <div class="paragraph-container" data-subsection-id="{{ subsection.id }}">
                 {% for para in subsection.paragraphs %}
-                <textarea class="editable-text" rows="1">{{ para | replace('\n\n', '\n') | replace('\r\n\r\n', '\r\n') }}</textarea>
+                <textarea class="editable-text" rows="1">{{ para | replace('\r\n', '\n') | replace('\n\n', '\n') | replace('\n', ' ') }}</textarea>
                 {% endfor %}
             </div>
 
