@@ -213,6 +213,36 @@ class DocGenerator:
                 run = p.runs[0]
                 run.font.size = Pt(12)
                 run.font.name = '宋体'
+
+            # 添加封面图片（如果有）
+            if cover_image_url:
+                # 添加空行
+                for _ in range(3):
+                    p = self.doc.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                
+                try:
+                    # 将URL转换为本地路径或下载图片
+                    import os
+                    from urllib.parse import urlparse
+                    
+                    # 如果是相对路径（以/开头），转换为绝对路径
+                    if cover_image_url.startswith('/'):
+                        image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), cover_image_url.lstrip('/'))
+                    else:
+                        image_path = cover_image_url
+                    
+                    # 检查文件是否存在
+                    if os.path.exists(image_path):
+                        # 添加图片，设置宽度为页面宽度的80%
+                        self.doc.add_picture(image_path, width=Cm(14))
+                        # 居中对齐图片
+                        last_paragraph = self.doc.paragraphs[-1]
+                        last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    else:
+                        print(f"警告: 封面图片不存在: {image_path}")
+                except Exception as e:
+                    print(f"添加封面图片失败: {e}")
         else:
             # 如果content是字符串，按原有逻辑处理
             # 添加空行使内容居中
