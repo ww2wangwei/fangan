@@ -284,6 +284,11 @@ class DocGenerator:
                             else:
                                 text = str(para_text)
                             
+                            # 清理多余的换行符，但保留列表项的格式
+                            import re
+                            # 将连续的两个及以上换行符替换为单个换行符
+                            text = re.sub(r'\n{2,}', '\n', text)
+                            
                             p = self.doc.add_paragraph(text)
                             p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
                             
@@ -292,7 +297,6 @@ class DocGenerator:
                             run.font.name = '宋体'
                             
                             # 检查是否为列表项（以数字+点开头）或"职责："标签
-                            import re
                             is_list_item = bool(re.match(r'^\d+\.\s', text.strip()))
                             is_label = text.strip() in ['职责：', '职责:', '职责']
                             
