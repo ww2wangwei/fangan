@@ -221,15 +221,21 @@ class DocGeneratorTemplate:
                             # 检查是否为列表项（以数字+点开头，如"1. "、"2. "等）
                             import re
                             is_list_item = bool(re.match(r'^\d+\.\s', text.strip()))
+                            # 检查是否为"职责："这样的标签
+                            is_label = text.strip() in ['职责：', '职责:', '职责']
                             
                             p = self.doc.add_paragraph(text)
                             p.style = 'Normal'
                             
-                            # 如果是列表项，使用悬挂缩进使换行文字与第一行对齐
-                            if is_list_item:
+                            # "职责："标签左对齐，无缩进
+                            if is_label:
+                                p.paragraph_format.first_line_indent = Pt(0)
+                                p.paragraph_format.left_indent = Pt(0)
+                            # 列表项使用悬挂缩进
+                            elif is_list_item:
                                 p.paragraph_format.first_line_indent = Pt(0)
                                 p.paragraph_format.left_indent = Pt(24)  # 整体缩进2字符
-                            # 其他所有段落都使用首行缩进2字符
+                            # 其他所有段落使用首行缩进2字符
                             else:
                                 p.paragraph_format.first_line_indent = Pt(24)
 
