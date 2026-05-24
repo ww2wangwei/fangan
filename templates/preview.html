@@ -422,7 +422,7 @@
             
             <div class="paragraph-container" data-subsection-id="{{ subsection.id }}">
                 {% for para in subsection.paragraphs %}
-                <textarea class="editable-text" rows="1">{{ para | replace('\r\n', '\n') | replace('\n\n', '\n') | replace('\n', ' ') }}</textarea>
+                <textarea class="editable-text">{{ para }}</textarea>
                 {% endfor %}
             </div>
 
@@ -851,6 +851,23 @@
                 button.textContent = '✨ AI生成内容';
             });
         }
+
+        // 页面加载完成后，自动调整所有textarea高度以适应内容
+        window.addEventListener('DOMContentLoaded', function() {
+            var textareas = document.querySelectorAll('.editable-text');
+            textareas.forEach(function(textarea) {
+                // 设置最小高度
+                textarea.style.height = 'auto';
+                // 根据内容调整高度
+                textarea.style.height = textarea.scrollHeight + 'px';
+                
+                // 监听输入事件，动态调整高度
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+            });
+        });
     </script>
 </body>
 </html>
